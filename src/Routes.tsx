@@ -1,17 +1,16 @@
 import React from 'react';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {Route} from './shared/model/general.model';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Route } from './shared/model/general.model';
+
 import Login from './Components/Templates/Login';
 import Home from './Components/Templates/Home/Home';
 import Profile from './Components/Templates/Profile/Profile';
-
-import colors from './shared/Colors/colors';
-
 import Dashboard from './Components/Templates/Dashboard/Dashboard';
 import Classes from './Components/Templates/Classes/Classes';
 import Result from './Components/Templates/Result/Result';
 import Exams from './Components/Templates/Exams/Exams';
 import ResultDetails from './Components/Templates/Result/components/ResultDetails';
+import ExamResults from './Components/Templates/Exams/components/ExamResults';
 
 import HomeIcon from './assets/icons/HomeIcon.svg';
 import HomeActive from './assets/icons/HomeIconActive.svg';
@@ -33,6 +32,8 @@ export const ROUTES = {
   Exams: 'Exams',
   Profile: 'Profile',
   ResultDetails: 'ResultDetails',
+  ResultDetails1: 'ResultDetails1',
+  ExamResults: 'ExamResults',
 } as const;
 
 export type RootStackParamList = {
@@ -40,6 +41,12 @@ export type RootStackParamList = {
   [ROUTES.Home]: undefined;
   [ROUTES.Dashboard]: undefined;
   [ROUTES.Profile]: undefined;
+  [ROUTES.ResultDetails]: undefined;
+  [ROUTES.Exams]: undefined;
+  [ROUTES.Classes]: undefined;
+  [ROUTES.Result]: undefined;
+  [ROUTES.ResultDetails1]: { exam: any };
+  [ROUTES.ExamResults]: { exam: any };
 };
 
 export type UseNavigationProps = NativeStackNavigationProp<RootStackParamList>;
@@ -82,7 +89,7 @@ export const BOTTOM_ROUTES: Route[] = [
   },
 ];
 
-const PRE_LOGIN_ROUTES: Route[] = [
+export const PRE_LOGIN_ROUTES: Route[] = [
   {
     name: ROUTES.Login,
     component: Login,
@@ -90,13 +97,20 @@ const PRE_LOGIN_ROUTES: Route[] = [
   },
 ];
 
-const POST_LOGIN_ROUTES: Route[] = [
-  {name: ROUTES.Dashboard, component: Dashboard, backgroundColor: '#ffffff'},
+export const POST_LOGIN_ROUTES: Route[] = [
+  {
+    name: ROUTES.Dashboard,
+    component: Dashboard,
+    backgroundColor: '#ffffff',
+  },
   {
     name: ROUTES.ResultDetails,
     component: ResultDetails,
     backgroundColor: '#ffffff',
   },
+  {
+    name: ROUTES.ExamResults,
+    component: ExamResults,
+    backgroundColor: '#ffffff',
+  },
 ];
-
-export {PRE_LOGIN_ROUTES, POST_LOGIN_ROUTES};

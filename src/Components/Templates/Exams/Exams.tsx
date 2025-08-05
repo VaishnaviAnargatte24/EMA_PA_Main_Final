@@ -9,6 +9,9 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import IconBack from '../../../assets/icons/Back_Icon.svg';
+import { UseNavigationProps, ROUTES } from '../../../Routes'; // ✅ Adjust the import to your path
+const { width } = Dimensions.get('window');
 
 const allExams = [
   {
@@ -39,12 +42,28 @@ const allExams = [
     id: '4',
     subject: 'Physics',
     topic: 'Fundamental of physics',
+    date: '8 Feb 2025',
+    marks: 200,
+    type: 'upcoming',
+  },
+  {
+    id: '5',
+    subject: 'Physics',
+    topic: 'Fundamental of physics',
+    date: '10 Feb 2025',
+    marks: 200,
+    type: 'upcoming',
+  },
+  {
+    id: '6',
+    subject: 'Physics',
+    topic: 'Fundamental of physics',
     date: '25 Jan 2025',
     marks: 200,
     type: 'previous',
   },
   {
-    id: '5',
+    id: '7',
     subject: 'Chemistry',
     topic: 'Atomic Structure',
     date: '20 Jan 2025',
@@ -54,12 +73,12 @@ const allExams = [
 ];
 
 const Exams = () => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<UseNavigationProps>(); // ✅ Strongly typed navigation
   const [selectedTab, setSelectedTab] = useState<'upcoming' | 'previous'>('upcoming');
   const [open, setOpen] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState('all');
   const [items, setItems] = useState([
-    { label: 'All', value: null },
+    { label: 'All', value: 'all' },
     { label: 'Physics', value: 'Physics' },
     { label: 'Chemistry', value: 'Chemistry' },
     { label: 'Mathematics', value: 'Mathematics' },
@@ -69,18 +88,23 @@ const Exams = () => {
   ]);
 
   const filteredExams = allExams.filter(
-    exam => exam.type === selectedTab && (selectedSubject ? exam.subject === selectedSubject : true)
+    exam =>
+      exam.type === selectedTab &&
+      (selectedSubject === 'all' || exam.subject === selectedSubject)
   );
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Text style={styles.backText}>←</Text>
+        <TouchableOpacity
+          style={styles.backWrap}
+          onPress={() => navigation.goBack()}>
+          <View style={styles.backCircle}>
+            <IconBack width={12} height={12} />
+          </View>
+          <Text style={styles.topTitle}>Classes</Text>
         </TouchableOpacity>
-
-        <Text style={styles.title}>Exams</Text>
 
         <View style={styles.dropdownWrapper}>
           <DropDownPicker
@@ -94,7 +118,12 @@ const Exams = () => {
             style={styles.dropdown}
             dropDownContainerStyle={styles.dropdownContainer}
             textStyle={{ fontSize: 12 }}
-            maxHeight={120}
+            labelStyle={styles.labelStyle}
+            listItemContainerStyle={styles.listItemContainerStyle}
+            listItemLabelStyle={styles.listItemLabelStyle}
+            selectedItemContainerStyle={styles.selectedItemContainerStyle}
+            selectedItemLabelStyle={styles.selectedItemLabelStyle}
+            maxHeight={150}
           />
         </View>
       </View>
@@ -104,21 +133,35 @@ const Exams = () => {
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'upcoming' && styles.activeTab]}
           onPress={() => setSelectedTab('upcoming')}>
-          <Text style={[styles.tabText, selectedTab === 'upcoming' && styles.activeTabText]}>
+          <Text
+            style={[
+              styles.tabText,
+              selectedTab === 'upcoming'
+                ? styles.activeTabText
+                : styles.inactiveTabText,
+            ]}>
             Upcoming Exam
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'previous' && styles.activeTab]}
           onPress={() => setSelectedTab('previous')}>
-          <Text style={[styles.tabText, selectedTab === 'previous' && styles.activeTabText]}>
+          <Text
+            style={[
+              styles.tabText,
+              selectedTab === 'previous'
+                ? styles.activeTabText
+                : styles.inactiveTabText,
+            ]}>
             Previous Exam
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Exam List */}
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 20 }}>
         {filteredExams.map(exam => (
           <View key={exam.id} style={styles.examCard}>
             <View style={styles.examRow}>
@@ -131,7 +174,9 @@ const Exams = () => {
             <View style={styles.examFooter}>
               <Text style={styles.examMarks}>Total Marks - {exam.marks}</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ResultDetails1', { exam })}>
+                onPress={() =>
+                  navigation.navigate(ROUTES.ExamResults, { exam }) // ✅ navigate with param
+                }>
                 <Text style={styles.seeResult}>See Result</Text>
               </TouchableOpacity>
             </View>
@@ -144,14 +189,36 @@ const Exams = () => {
 
 export default Exams;
 
-const { width } = Dimensions.get('window');
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fafafa',
-    paddingTop: 40,
+    paddingTop: 20,
     paddingHorizontal: 16,
+    width: width,
+    alignSelf: 'center',
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  backWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backCircle: {
+    backgroundColor: '#F1F3FB',
+    borderRadius: 20,
+    padding: 6,
+    marginRight: 8,
+  },
+  topTitle: {
+    fontSize: 16,
+    color: '#2A2A2A',
+    fontWeight: '600',
   },
   header: {
     flexDirection: 'row',
@@ -160,23 +227,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     zIndex: 10,
   },
-  backButton: {
-    marginRight: 8,
-  },
-  backText: {
-    fontSize: 20,
-    color: '#2c3e94',
-    fontWeight: 'bold',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'left',
-    flex: 1,
-    paddingLeft: 8,
-  },
   dropdownWrapper: {
-    width: width * 0.35,
+    width: 100,
     zIndex: 1000,
   },
   dropdown: {
@@ -187,76 +239,122 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     borderColor: '#ccc',
+    borderRadius: 10,
+  },
+  labelStyle: {
+    fontFamily: 'Montserrat',
+    fontSize: 12,
+    color: '#2E4995',
+  },
+  listItemContainerStyle: {
+    borderRadius: 5,
+    marginVertical: 2,
+  },
+  listItemLabelStyle: {
+    color: '#2E4995',
+    fontFamily: 'Montserrat',
+    fontSize: 12,
+  },
+  selectedItemContainerStyle: {
+    backgroundColor: '#2E4995',
+    borderRadius: 5,
+  },
+  selectedItemLabelStyle: {
+    color: '#ffffff',
+    fontWeight: '500',
+    fontFamily: 'Montserrat',
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#eee',
-    borderRadius: 20,
+    backgroundColor: '#fff',
+    borderRadius: 30,
     marginVertical: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    overflow: 'hidden',
+    width: 345,
+    alignSelf: 'center',
   },
   tab: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 20,
+    width: 172.5,
+    height: 35,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  activeTab: {
-    backgroundColor: '#2c3e94',
-  },
   tabText: {
-    color: '#333',
-    fontWeight: '600',
+    fontFamily: 'Montserrat',
+    fontSize: 12,
+    fontWeight: '400',
+    textAlign: 'center',
+    lineHeight: 15,
+  },
+  activeTab: {
+    backgroundColor: '#2E4995',
   },
   activeTabText: {
     color: '#fff',
   },
+  inactiveTabText: {
+    color: '#2E4995',
+  },
   examCard: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 16,
+    width: 345,
+    height: 100,
+    backgroundColor: 'rgba(248, 242, 251, 0.61)',
+    padding: 12,
+    borderRadius: 13,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
     borderWidth: 1,
-    borderColor: '#ececec',
+    borderColor: '#D4C1E5',
+    alignSelf: 'center',
+    justifyContent: 'space-between',
   },
   examRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   examSubject: {
-    fontWeight: '600',
-    fontSize: 16,
-    color: '#2c3e94',
+    fontFamily: 'Montserrat',
+    fontWeight: '500',
+    fontSize: 15,
+    color: '#0C0B0B',
+    lineHeight: 15,
+    width: 90,
+    height: 18,
   },
   examTopic: {
-    fontStyle: 'italic',
+    fontFamily: 'Montserrat',
+    fontWeight: '300',
     fontSize: 13,
-    color: '#555',
+    fontStyle: 'italic',
+    color: '#363636',
     marginTop: 2,
+    lineHeight: 15,
   },
   examDate: {
-    fontSize: 13,
-    color: '#555',
+    fontFamily: 'Montserrat',
     fontWeight: '500',
+    fontSize: 12,
+    color: '#0C0B0B',
+    lineHeight: 15,
   },
   examFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 12,
   },
   examMarks: {
-    fontSize: 13,
-    color: '#333',
+    fontFamily: 'Montserrat',
+    fontWeight: '500',
+    fontSize: 12,
+    color: '#0C0B0B',
+    lineHeight: 15,
   },
   seeResult: {
-    color: '#2c3e94',
-    fontWeight: '600',
-    fontSize: 13,
-    textDecorationLine: 'underline',
+    fontFamily: 'Montserrat',
+    fontWeight: '500',
+    fontSize: 10,
+    color: '#5670FA',
+    lineHeight: 15,
   },
 });

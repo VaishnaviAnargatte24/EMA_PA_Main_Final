@@ -1,27 +1,29 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
 
-import {POST_LOGIN_ROUTES, PRE_LOGIN_ROUTES} from './Routes';
+import {POST_LOGIN_ROUTES, PRE_LOGIN_ROUTES, BOTTOM_ROUTES} from './Routes';
 import UserContextProvider from './shared/ContextProviders/UserContextProvider';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 
 const Stack = createNativeStackNavigator();
 
-const SafeAreaWrapper = (Component: any, backgroundColor: string) => () => {
+const SafeAreaWrapper = (
+  Component: React.ComponentType<any>,
+  backgroundColor: string,
+) => () => {
   if (!Component) {
     console.error('SafeAreaWrapper received an undefined component.');
     return null;
   }
 
   return (
-    <SafeAreaView style={{backgroundColor, flex: 1}}>
-      <View style={{flex: 1}}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor}]}>
+      <View style={styles.flex}>
         <Component />
       </View>
     </SafeAreaView>
@@ -29,29 +31,19 @@ const SafeAreaWrapper = (Component: any, backgroundColor: string) => () => {
 };
 
 const Navigator = () => {
-  const Routes = true ? POST_LOGIN_ROUTES : PRE_LOGIN_ROUTES;
-
-  Routes.forEach((screen, index) => {
-    if (!screen.component) {
-      console.error(
-        `Route at index ${index} (${screen.name}) has an undefined component.`,
-      );
-    }
-  });
+  const isLoggedIn = true; // Replace with real auth logic
+  const Routes = [...(isLoggedIn ? POST_LOGIN_ROUTES : PRE_LOGIN_ROUTES), ...BOTTOM_ROUTES];
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       {Routes.map(screen => {
-        if (!screen.component) return null;
+        const Component = screen.name === 'Home' ? BottomTabNavigator : screen.component;
 
         return (
           <Stack.Screen
             key={screen.name}
             name={screen.name}
-            component={SafeAreaWrapper(
-              screen.component,
-              screen.backgroundColor,
-            )}
+            component={SafeAreaWrapper(Component, screen.backgroundColor)}
             options={{
               headerShown: false,
               navigationBar: {visible: false},
@@ -67,7 +59,7 @@ const Navigator = () => {
 
 const App = () => {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={styles.flex}>
       <SafeAreaProvider>
         <NavigationContainer>
           <Navigator />
@@ -85,3 +77,12 @@ const AppWithUserContext = () => (
 );
 
 export default AppWithUserContext;
+
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+});

@@ -7,22 +7,23 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import IconBack from '../../../../assets/icons/Back_Icon.svg'; 
 
-
-const ResultDetails1 = () => {
+const ExamResults = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { exam } = route.params;
+  const { exam } = route.params as { exam: any };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#000" />
+        <TouchableOpacity style={styles.backWrap} onPress={() => navigation.goBack()}>
+          <View style={styles.backCircle}>
+            <IconBack width={12} height={12} />
+          </View>
+          <Text style={styles.headerTitle}>Result</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Result</Text>
       </View>
 
       {/* Card */}
@@ -54,7 +55,9 @@ const ResultDetails1 = () => {
           <Text style={styles.value}>0</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Answered & Marked for Review{'\n'}(will be considered for evaluation)</Text>
+          <Text style={styles.label}>
+            Answered & Marked for Review{'\n'}(will be considered for evaluation)
+          </Text>
           <Text style={styles.value}>0</Text>
         </View>
         <View style={styles.row}>
@@ -91,15 +94,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  backWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backCircle: {
+    backgroundColor: '#F1F3FB',
+    borderRadius: 20,
+    padding: 6,
+    marginRight: 8,
+  },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginLeft: 10,
   },
   card: {
     backgroundColor: '#F9F6FB',
     borderRadius: 12,
-    padding: 16,
+    padding: 20,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -136,10 +148,12 @@ const styles = StyleSheet.create({
   label: {
     color: '#333',
     fontSize: 14,
+    flex: 1,
   },
   value: {
     fontWeight: '500',
     color: '#000',
+    textAlign: 'right',
   },
   marksBox: {
     marginTop: 20,
@@ -157,4 +171,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResultDetails1;
+export default ExamResults;

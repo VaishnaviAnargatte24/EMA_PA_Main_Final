@@ -8,8 +8,12 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import IconBack from '../../../assets/icons/back_button.svg';
+import { useNavigation } from '@react-navigation/native';
+
 
 const Profile = () => {
+  const navigation = useNavigation();
   const [isEditing, setIsEditing] = useState(false);
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
   const [isCardFocused, setIsCardFocused] = useState(false);
@@ -36,8 +40,12 @@ const Profile = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profile</Text>
-      </View>
+  <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+    <IconBack width={16} height={16} />
+  </TouchableOpacity>
+  <Text style={styles.headerTitle}>Profile</Text>
+</View>
+
 
       <View style={styles.profileImageContainer}>
         <Image
@@ -183,6 +191,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  backButton: {
+  marginRight: 12,
+  backgroundColor: '#ffffff20',
+  borderRadius: 20,
+  padding: 6,
+},
+
   header: {
     backgroundColor: '#2c3e94',
     paddingTop: 50,

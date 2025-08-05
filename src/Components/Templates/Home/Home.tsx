@@ -7,8 +7,12 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
-import {BarChart, PieChartPro} from 'react-native-gifted-charts';
+import { BarChart, PieChartPro } from 'react-native-gifted-charts';
 
+import NotificationBell from '../../../assets/icons/Notification_bell.svg';
+import MenuBar from '../../../assets/icons/Menu_bar.svg';
+import AttendanceIcon from '../../../assets/icons/attendance_icon.svg';
+import ScoreIcon from '../../../assets/icons/score.svg';
 
 const { width } = Dimensions.get('window');
 
@@ -17,34 +21,31 @@ const Home = () => {
     { value: 47, color: '#009FFF', gradientCenterColor: '#006DFF', focused: true },
     { value: 40, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
     { value: 16, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
-    { value: 3,  color: '#FFA5BA', gradientCenterColor: '#FF7F97' },
+    { value: 3, color: '#FFA5BA', gradientCenterColor: '#FF7F97' },
   ];
 
-  const renderDot = color => (
-    <View style={{
-      height: 10, width: 10, borderRadius: 5,
-      backgroundColor: color, marginRight: 10,
-    }} />
+  const renderDot = (color: string) => (
+    <View style={[styles.dot, { backgroundColor: color }]} />
   );
 
   const renderLegendComponent = () => (
     <>
-      <View style={{flexDirection: 'row', justifyContent: 'center', marginBottom: 10}}>
-        <View style={{flexDirection: 'row', alignItems: 'center', width: 120, marginRight: 20}}>
+      <View style={styles.legendRow}>
+        <View style={styles.legendBox}>
           {renderDot('#006DFF')}
           <Text>Excellent: 47%</Text>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center', width: 120}}>
+        <View style={styles.legendBox}>
           {renderDot('#8F80F3')}
           <Text>Okay: 16%</Text>
         </View>
       </View>
-      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-        <View style={{flexDirection: 'row', alignItems: 'center', width: 120, marginRight: 20}}>
+      <View style={styles.legendRow}>
+        <View style={styles.legendBox}>
           {renderDot('#3BE9DE')}
           <Text>Good: 40%</Text>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center', width: 120}}>
+        <View style={styles.legendBox}>
           {renderDot('#FF7F97')}
           <Text>Poor: 3%</Text>
         </View>
@@ -53,14 +54,13 @@ const Home = () => {
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{paddingBottom: 40}}>
-      
-      {/* ✅ Header Section */}
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+      {/* Header Section */}
       <View style={styles.headerWrapper}>
         <View style={styles.headerContainer}>
           <View style={styles.profileSection}>
             <Image
-              source={{uri: 'https://randomuser.me/api/portraits/men/1.jpg'}}
+              source={{ uri: 'https://randomuser.me/api/portraits/men/1.jpg' }}
               style={styles.avatar}
             />
             <View>
@@ -71,41 +71,41 @@ const Home = () => {
           </View>
           <View style={styles.rightIcons}>
             <View style={styles.notificationWrapper}>
-              <Ionicons name="notifications-outline" size={24} color="#000" />
+              <NotificationBell width={24} height={24} />
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>2</Text>
               </View>
             </View>
-            <Ionicons name="menu" size={26} color="#000" style={{marginLeft: 15}} />
+            <MenuBar width={26} height={26} style={{ marginLeft: 15 }} />
           </View>
         </View>
       </View>
 
-      {/* Cards */}
+      {/* Score Cards */}
       <Text style={styles.title}>Student Score</Text>
       <View style={styles.cardsContainer}>
-        <View style={[styles.card, {backgroundColor: '#d0f0f8'}]}>
-          <Ionicons name="clipboard-outline" size={26} color="#000" style={{ marginBottom: 10 }} />
+        <View style={[styles.card, { backgroundColor: '#d0f0f8' }]}>
+          <AttendanceIcon width={30} height={30} style={{ marginBottom: 6 }} />
           <Text style={styles.cardTitle}>69%</Text>
           <Text style={styles.cardSubtitle}>Total Attendance</Text>
         </View>
-        <View style={[styles.card, {backgroundColor: '#e7e4ff'}]}>
-          <Ionicons name="calendar-outline" size={26} color="#000" style={{ marginBottom: 10 }} />
+        <View style={[styles.card, { backgroundColor: '#e7e4ff' }]}>
+          <ScoreIcon width={30} height={30} style={{ marginBottom: 6 }} />
           <Text style={styles.cardTitle}>97%</Text>
           <Text style={styles.cardSubtitle}>Weekly Score</Text>
         </View>
       </View>
 
-      {/* Bar Chart */}
+      {/* Progress Bar Chart */}
       <Text style={styles.title}>Progress</Text>
       <View style={styles.chartContainer}>
         <View style={styles.legendContainer}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendColor, {backgroundColor: '#03A9F4'}]} />
+            <View style={[styles.legendColor, { backgroundColor: '#03A9F4' }]} />
             <Text style={styles.legendLabel}>Student Score</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendColor, {backgroundColor: '#B3E5FC'}]} />
+            <View style={[styles.legendColor, { backgroundColor: '#B3E5FC' }]} />
             <Text style={styles.legendLabel}>Average Student Score</Text>
           </View>
         </View>
@@ -145,7 +145,7 @@ const Home = () => {
 
       {/* Pie Chart */}
       <Text style={styles.title}>Overall Statistics</Text>
-      <View style={{padding: 20, alignItems: 'center'}}>
+      <View style={{ padding: 20, alignItems: 'center' }}>
         <PieChartPro
           data={pieData}
           donut
@@ -155,9 +155,9 @@ const Home = () => {
           innerRadius={60}
           innerCircleColor={'#232B5D'}
           centerLabelComponent={() => (
-            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: 22, fontWeight: 'bold'}}>47%</Text>
-              <Text style={{fontSize: 14}}>Excellent</Text>
+            <View style={styles.centerLabel}>
+              <Text style={styles.centerLabelMain}>47%</Text>
+              <Text style={styles.centerLabelSub}>Excellent</Text>
             </View>
           )}
         />
@@ -291,5 +291,33 @@ const styles = StyleSheet.create({
   legendLabel: {
     fontSize: 12,
     color: '#555',
+  },
+  dot: {
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  legendRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  legendBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 120,
+    marginRight: 20,
+  },
+  centerLabel: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerLabelMain: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  centerLabelSub: {
+    fontSize: 14,
   },
 });
