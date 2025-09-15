@@ -1,5 +1,5 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useState } from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useState} from 'react';
 import resultillustration from '../../../../assets/images/resultIllustration.png';
 import {
   View,
@@ -17,7 +17,7 @@ import CloseIcon from '../../../../assets/icons/Close_icon.svg';
 import LeftArrow from '../../../../assets/icons/Left_icon.svg';
 import RightArrow from '../../../../assets/icons/Right_icon.svg';
 import DropDownPicker from 'react-native-dropdown-picker';
-
+ 
 // Define expected route params
 type RouteParams = {
   item: {
@@ -27,16 +27,17 @@ type RouteParams = {
     rollNumber: string;
   };
 };
-
-// Manually created Arrow Up component
-const ManualArrowUp = () => (
-  <View style={{ width: 18, height: 18, justifyContent: 'center', alignItems: 'center' }}>
-    <Text style={{ fontSize: 18, color: '#000', transform: [{ translateY: -2 }] }}>▲</Text>
+ 
+// 👇 Custom Down Arrow Component with Physics text
+const SubjectWithArrow = () => (
+  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <Text style={{fontSize: 14, color: '#000', marginRight: 6}}></Text>
+    <Text style={{fontSize: 14, color: '#000'}}>▼</Text>
   </View>
 );
-
+ 
 const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
+ 
 const getDaysInMonth = (month: number, year: number) => {
   const date = new Date(year, month, 1);
   const days = [];
@@ -46,61 +47,78 @@ const getDaysInMonth = (month: number, year: number) => {
   }
   return days;
 };
-
+ 
 const ResultDetails = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { item } = route.params as RouteParams;
-
+  const {item} = route.params as RouteParams;
+ 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(item.subject);
   const [items, setItems] = useState([
-    { label: 'Physics', value: 'Physics' },
-    { label: 'Maths', value: 'Maths' },
-    { label: 'Biology', value: 'Biology' },
-    { label: 'Chemistry', value: 'Chemistry' },
-    { label: 'JEE', value: 'JEE' },
-    { label: 'NEET', value: 'NEET' },
-    { label: 'MHT-CET', value: 'MHT-CET' },
+    {label: 'Science', value: 'Science'},
+    {label: 'Maths', value: 'Maths'},
+    {label: 'Biology', value: 'Biology'},
+    {label: 'Chemistry', value: 'Chemistry'},
+    {label: 'JEE', value: 'JEE'},
+    {label: 'NEET', value: 'NEET'},
+    {label: 'MHT-CET', value: 'MHT-CET'},
+    {label: 'Physics', value: 'Physics'},
   ]);
-
+ 
   const [isCalendarVisible, setCalendarVisible] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 1, 3)); // 3 Feb 2025 as default
-  const [selectedDate, setSelectedDate] = useState(new Date(2025, 1, 3)); // 3 Feb 2025 as default
-
-  const days = getDaysInMonth(currentDate.getMonth(), currentDate.getFullYear());
-
+  const [currentDate, setCurrentDate] = useState(new Date(2025, 1, 3));
+  const [selectedDate, setSelectedDate] = useState(new Date(2025, 1, 3));
+ 
+  const days = getDaysInMonth(
+    currentDate.getMonth(),
+    currentDate.getFullYear(),
+  );
+ 
   const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
+    );
   };
-
+ 
   const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
+    );
   };
-
+ 
   const handleDatePress = (date: Date) => {
     setSelectedDate(date);
   };
-
+ 
   const handleOkPress = () => {
     setCalendarVisible(false);
   };
-
+ 
   const renderBlanks = () => {
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+    const firstDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1,
+    ).getDay();
     const blanks = [];
     const startDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-    const prevMonthDays = getDaysInMonth(currentDate.getMonth() - 1, currentDate.getFullYear());
+    const prevMonthDays = getDaysInMonth(
+      currentDate.getMonth() - 1,
+      currentDate.getFullYear(),
+    );
     for (let i = 0; i < startDay; i++) {
       blanks.unshift(
         <View key={`prev-${i}`} style={styles.dayContainer}>
-          <Text style={styles.otherMonthDayText}>{prevMonthDays[prevMonthDays.length - 1 - i].getDate()}</Text>
-        </View>
+          <Text style={styles.otherMonthDayText}>
+            {prevMonthDays[prevMonthDays.length - 1 - i].getDate()}
+          </Text>
+        </View>,
       );
     }
     return blanks;
   };
-
+ 
   const renderNextMonthBlanks = () => {
     const totalSlots = renderBlanks().length + days.length;
     const blanks = [];
@@ -108,18 +126,20 @@ const ResultDetails = () => {
       blanks.push(
         <View key={`next-${i}`} style={styles.dayContainer}>
           <Text style={styles.otherMonthDayText}>{i}</Text>
-        </View>
+        </View>,
       );
     }
     return blanks;
   };
-
+ 
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}>
             <IconBack width={16} height={16} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Result</Text>
@@ -133,7 +153,7 @@ const ResultDetails = () => {
               setOpen={setOpen}
               setValue={setValue}
               setItems={setItems}
-              placeholder="Select Subject"
+              placeholder="..."
               listMode="SCROLLVIEW"
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropdownBox}
@@ -141,18 +161,24 @@ const ResultDetails = () => {
               selectedItemContainerStyle={styles.selectedItemContainer}
               selectedItemLabelStyle={styles.selectedItemLabel}
               listItemLabelStyle={styles.listItemLabel}
-              ArrowDownIconComponent={() => <ManualArrowUp />}
+              ArrowDownIconComponent={() => <SubjectWithArrow />} // ✅ Physics + Arrow
             />
           </View>
-          <TouchableOpacity onPress={() => setCalendarVisible(true)} style={styles.dateContainer}>
+          <TouchableOpacity
+            onPress={() => setCalendarVisible(true)}
+            style={styles.dateContainer}>
             <IconCalender width={16} height={16} />
             <Text style={styles.dateText}>
-              {selectedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+              {selectedDate.toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-
+ 
       {/* Custom Calendar Modal */}
       <Modal
         animationType="fade"
@@ -163,19 +189,26 @@ const ResultDetails = () => {
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Calender</Text>
-              <TouchableOpacity onPress={() => setCalendarVisible(false)} style={styles.modalCloseBtn}>
+              <TouchableOpacity
+                onPress={() => setCalendarVisible(false)}
+                style={styles.modalCloseBtn}>
                 <CloseIcon width={16} height={16} />
               </TouchableOpacity>
             </View>
             <View style={styles.monthHeader}>
               <View style={styles.monthDisplayContainer}>
-                <TouchableOpacity onPress={handlePrevMonth} style={styles.monthNavButton}>
+                <TouchableOpacity
+                  onPress={handlePrevMonth}
+                  style={styles.monthNavButton}>
                   <LeftArrow width={24} height={24} />
                 </TouchableOpacity>
                 <Text style={styles.monthText}>
-                  {currentDate.toLocaleString('default', { month: 'long' })}, {currentDate.getFullYear()}
+                  {currentDate.toLocaleString('default', {month: 'long'})},{' '}
+                  {currentDate.getFullYear()}
                 </Text>
-                <TouchableOpacity onPress={handleNextMonth} style={styles.monthNavButton}>
+                <TouchableOpacity
+                  onPress={handleNextMonth}
+                  style={styles.monthNavButton}>
                   <RightArrow width={24} height={24} />
                 </TouchableOpacity>
               </View>
@@ -190,13 +223,22 @@ const ResultDetails = () => {
             <View style={styles.calendarGrid}>
               {renderBlanks()}
               {days.map((date, index) => {
-                const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
+                const isSelected =
+                  selectedDate &&
+                  selectedDate.toDateString() === date.toDateString();
                 return (
                   <TouchableOpacity
                     key={index}
-                    style={[styles.dayContainer, isSelected && styles.selectedDay]}
+                    style={[
+                      styles.dayContainer,
+                      isSelected && styles.selectedDay,
+                    ]}
                     onPress={() => handleDatePress(date)}>
-                    <Text style={[styles.dayText, isSelected && styles.selectedDayText]}>
+                    <Text
+                      style={[
+                        styles.dayText,
+                        isSelected && styles.selectedDayText,
+                      ]}>
                       {date.getDate()}
                     </Text>
                   </TouchableOpacity>
@@ -205,7 +247,9 @@ const ResultDetails = () => {
               {renderNextMonthBlanks()}
             </View>
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setCalendarVisible(false)}>
+              <TouchableOpacity
+                style={styles.cancelBtn}
+                onPress={() => setCalendarVisible(false)}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.okBtn} onPress={handleOkPress}>
@@ -215,29 +259,33 @@ const ResultDetails = () => {
           </View>
         </View>
       </Modal>
-
+ 
       {/* Profile Card */}
       <View style={styles.card}>
         <View>
           <Text style={styles.cardText}>
-            <Text style={styles.boldValue}>Candidate Name</Text> - <Text>{item.name || 'Shruti Rajput'}</Text>
+            <Text style={styles.boldValue}>Candidate Name</Text> -{' '}
+            <Text>{item.name || 'Shruti Rajput'}</Text>
           </Text>
           <Text style={styles.cardText}>
-            <Text style={styles.boldValue}>Exam Name</Text> - <Text>{item.exam || 'NEET'}</Text>
+            <Text style={styles.boldValue}>Exam Name</Text> -{' '}
+            <Text>{item.exam || 'NEET'}</Text>
           </Text>
           <Text style={styles.cardText}>
-            <Text style={styles.boldValue}>Subject Name</Text> - <Text>{item.subject || 'Physics'}</Text>
+            <Text style={styles.boldValue}>Subject Name</Text> -{' '}
+            <Text>{item.subject || 'Science'}</Text>
           </Text>
           <Text style={styles.cardText}>
-            <Text style={styles.boldValue}>Roll Number</Text> - <Text>{item.rollNumber || '69102189'}</Text>
+            <Text style={styles.boldValue}>Roll Number</Text> -{' '}
+            <Text>{item.rollNumber || '69102189'}</Text>
           </Text>
         </View>
         <Image
-          source={{ uri: 'https://randomuser.me/api/portraits/women/1.jpg' }}
+          source={{uri: 'https://randomuser.me/api/portraits/women/1.jpg'}}
           style={styles.profilePic}
         />
       </View>
-
+ 
       {/* Image Graph */}
       <View style={styles.chartContainer}>
         <Image
@@ -245,7 +293,6 @@ const ResultDetails = () => {
           style={styles.chartImage}
           resizeMode="contain"
         />
-        {/* Static Line Scale */}
         <View style={styles.graphWrapper}>
           <View style={styles.graphLine} />
           <View style={styles.graphScale}>
@@ -264,7 +311,7 @@ const ResultDetails = () => {
           </View>
         </View>
       </View>
-
+ 
       {/* Score Card */}
       <Text style={styles.sectionTitle}>Score Card</Text>
       <View style={styles.scoreRow}>
@@ -278,16 +325,16 @@ const ResultDetails = () => {
         <Text style={styles.scoreText}>Correct Answers - 25</Text>
         <Text style={styles.scoreText}>Incorrect Answers - 15</Text>
       </View>
-
+ 
       <TouchableOpacity style={styles.scoreBtn}>
         <Text style={styles.scoreBtnText}>Total Score - 70</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 };
-
+ 
 export default ResultDetails;
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -321,7 +368,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   dropdownWrapper: {
-    width: 100,
+    width: 120,
     zIndex: 1000,
   },
   dropdown: {
@@ -464,7 +511,6 @@ const styles = StyleSheet.create({
     color: 'green',
     fontWeight: 'bold',
   },
-  // Custom modal styles to match the provided image
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -480,10 +526,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
@@ -553,40 +596,50 @@ const styles = StyleSheet.create({
   },
   dayText: {
     fontSize: 16,
+    color: '#000',
   },
   selectedDay: {
-    backgroundColor: '#6c63ff',
+    backgroundColor: '#2E4995',
     borderRadius: 20,
   },
   selectedDayText: {
-    color: 'white',
+    color: '#fff',
+    fontWeight: 'bold',
   },
   otherMonthDayText: {
-    color: '#a0a0a0',
+    color: '#bbb',
   },
   modalButtons: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     width: '100%',
     marginTop: 20,
   },
   cancelBtn: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    flex: 1,
+    marginRight: 10,
+    paddingVertical: 12,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  okBtn: {
+    flex: 1,
+    marginLeft: 10,
+    paddingVertical: 12,
+    backgroundColor: '#2E4995',
+    borderRadius: 10,
+    alignItems: 'center',
   },
   cancelText: {
     fontSize: 16,
-    color: '#6c63ff',
-  },
-  okBtn: {
-    backgroundColor: '#6c63ff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginLeft: 10,
+    color: '#333',
   },
   okText: {
     fontSize: 16,
     color: 'white',
+    fontWeight: 'bold',
   },
 });
+ 
+ 

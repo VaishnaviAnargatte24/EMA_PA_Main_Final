@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,48 +14,62 @@ import MenuBar from '../../../assets/icons/Menu_bar.svg';
 import AttendanceIcon from '../../../assets/icons/attendance_icon.svg';
 import ScoreIcon from '../../../assets/icons/score.svg';
 
-const { width } = Dimensions.get('window');
-
 const Home = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
   const pieData = [
-    { value: 47, color: '#009FFF', gradientCenterColor: '#006DFF', focused: true },
-    { value: 40, color: '#93FCF8', gradientCenterColor: '#3BE9DE' },
-    { value: 16, color: '#BDB2FA', gradientCenterColor: '#8F80F3' },
-    { value: 3, color: '#FFA5BA', gradientCenterColor: '#FF7F97' },
+    {
+      value: 47,
+      color: '#009FFF',
+      gradientCenterColor: '#006DFF',
+      label: 'Mathematics',
+      onPress: () => setSelectedIndex(0),
+    },
+    {
+      value: 40,
+      color: '#93FCF8',
+      gradientCenterColor: '#3BE9DE',
+      label: 'Physics',
+      onPress: () => setSelectedIndex(1),
+    },
+    {
+      value: 16,
+      color: '#BDB2FA',
+      gradientCenterColor: '#8F80F3',
+      label: 'Chemistry',
+      onPress: () => setSelectedIndex(2),
+    },
+    {
+      value: 3,
+      color: '#FFA5BA',
+      gradientCenterColor: '#FF7F97',
+      label: 'Biology',
+      onPress: () => setSelectedIndex(3),
+    },
   ];
+
+  const selectedSection = pieData[selectedIndex];
 
   const renderDot = (color: string) => (
     <View style={[styles.dot, { backgroundColor: color }]} />
   );
 
-  const renderLegendComponent = () => (
-    <>
-      <View style={styles.legendRow}>
-        <View style={styles.legendBox}>
-          {renderDot('#006DFF')}
-          <Text>Excellent: 47%</Text>
+  const renderSubjectsLegend = () => (
+    <View style={styles.subjectsLegendContainer}>
+      {pieData.map((item, index) => (
+        <View key={index} style={styles.subjectItem}>
+          {renderDot(item.color)}
+          <Text style={styles.subjectText}>
+            {item.label} {item.value}%
+          </Text>
         </View>
-        <View style={styles.legendBox}>
-          {renderDot('#8F80F3')}
-          <Text>Okay: 16%</Text>
-        </View>
-      </View>
-      <View style={styles.legendRow}>
-        <View style={styles.legendBox}>
-          {renderDot('#3BE9DE')}
-          <Text>Good: 40%</Text>
-        </View>
-        <View style={styles.legendBox}>
-          {renderDot('#FF7F97')}
-          <Text>Poor: 3%</Text>
-        </View>
-      </View>
-    </>
+      ))}
+    </View>
   );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-      {/* Header Section */}
+      {/* Header */}
       <View style={styles.headerWrapper}>
         <View style={styles.headerContainer}>
           <View style={styles.profileSection}>
@@ -83,7 +97,11 @@ const Home = () => {
 
       {/* Score Cards */}
       <Text style={styles.title}>Student Score</Text>
-      <View style={styles.cardsContainer}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.cardsContainer}
+      >
         <View style={[styles.card, { backgroundColor: '#d0f0f8' }]}>
           <AttendanceIcon width={30} height={30} style={{ marginBottom: 6 }} />
           <Text style={styles.cardTitle}>69%</Text>
@@ -94,9 +112,14 @@ const Home = () => {
           <Text style={styles.cardTitle}>97%</Text>
           <Text style={styles.cardSubtitle}>Weekly Score</Text>
         </View>
-      </View>
+        <View style={[styles.card, { backgroundColor: '#ffe4e4' }]}>
+          <ScoreIcon width={30} height={30} style={{ marginBottom: 6 }} />
+          <Text style={styles.cardTitle}>91%</Text>
+          <Text style={styles.cardSubtitle}>Monthly Score</Text>
+        </View>
+      </ScrollView>
 
-      {/* Progress Bar Chart */}
+      {/* Bar Chart */}
       <Text style={styles.title}>Progress</Text>
       <View style={styles.chartContainer}>
         <View style={styles.legendContainer}>
@@ -156,12 +179,13 @@ const Home = () => {
           innerCircleColor={'#232B5D'}
           centerLabelComponent={() => (
             <View style={styles.centerLabel}>
-              <Text style={styles.centerLabelMain}>47%</Text>
-              <Text style={styles.centerLabelSub}>Excellent</Text>
+              <Text style={styles.centerLabelMain}>{selectedSection.value}%</Text>
+              <Text style={styles.centerLabelSub}>{selectedSection.label}</Text>
             </View>
           )}
         />
-        {renderLegendComponent()}
+        <View style={{ height: 20 }} />
+        {renderSubjectsLegend()}
       </View>
     </ScrollView>
   );
@@ -242,19 +266,18 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   cardsContainer: {
+    paddingLeft: 20,
+    paddingRight: 10,
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    justifyContent: 'space-between',
   },
   card: {
     borderRadius: 10,
     padding: 15,
-    width: (width - 60) / 2,
+    width: Dimensions.get('window').width * 0.5,
     height: 111,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 10,
   },
   cardTitle: {
     fontSize: 20,
@@ -296,18 +319,25 @@ const styles = StyleSheet.create({
     height: 10,
     width: 10,
     borderRadius: 5,
-    marginRight: 10,
+    marginRight: 6,
   },
-  legendRow: {
+  subjectsLegendContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
-    marginBottom: 10,
+    columnGap: 40,
+    rowGap: 10,
+    paddingHorizontal: 20,
   },
-  legendBox: {
+  subjectItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: 120,
-    marginRight: 20,
+    width: '45%',
+  },
+  subjectText: {
+    fontSize: 14,
+    color: '#222',
+    fontWeight: '600',
   },
   centerLabel: {
     justifyContent: 'center',
@@ -316,8 +346,10 @@ const styles = StyleSheet.create({
   centerLabelMain: {
     fontSize: 22,
     fontWeight: 'bold',
+    color: '#fff',
   },
   centerLabelSub: {
     fontSize: 14,
+    color: '#fff',
   },
 });

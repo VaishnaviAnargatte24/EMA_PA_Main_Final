@@ -40,7 +40,7 @@ const Login = () => {
       console.log('Login Success:', data);
       Alert.alert('Success', 'Login Successful');
 
-      // Example: Save token
+      // Example: Save token.
       // await AsyncStorage.setItem('token', data.token);
       // navigation.navigate('Home');
     } else {
